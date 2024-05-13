@@ -1,0 +1,74 @@
+version: "3.8"
+services:
+
+  app:
+    image: aleynacelik/bitirme:v1
+    container_name: app
+    volumes:
+      - ./:/app
+    environment:
+      - name=value
+    ports:
+      - "3000:3000"
+    networks:
+      - my_network
+
+  redis:
+    container_name: redis_container
+    image: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-service
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: records
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=caching_sha2_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - my_network
+
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq_container
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672" # Management plugin için
+    networks:
+      - my_network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - my_network
+  mongodb:
+    image: mongo
+    container_name: mongodb_container
+    restart: always
+    ports:
+      - "27017:27017"
+    networks:
+      - my_network
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  db_data:
