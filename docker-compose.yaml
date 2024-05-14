@@ -1,6 +1,5 @@
 version: "3.8"
 services:
-
   app:
     image: aleynacelik/bitirme:v1
     container_name: app
@@ -55,20 +54,27 @@ services:
     image: adminer
     restart: always
     ports:
-      - 8080:8080
+      - "8080:8080"
     networks:
       - my_network
-  mongodb:
-    image: mongo
-    container_name: mongodb_container
-    restart: always
+
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
     ports:
       - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
     networks:
       - my_network
+
 networks:
   my_network:
     driver: bridge
 
 volumes:
   db_data:
+  mongo-data:
